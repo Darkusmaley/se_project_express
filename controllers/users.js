@@ -18,9 +18,10 @@ module.exports.getUser = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, avatar } = req.body;
+  console.log(req.body);
   User.create({ name, avatar })
     .then((user) => res.status(200).res.send(user))
     .catch(() => {
-      res.status(500).send({ message: "Error" });
+      res.status(500).send({ message: "Unable to create user" });
     });
 };
