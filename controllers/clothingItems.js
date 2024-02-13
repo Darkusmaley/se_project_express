@@ -1,5 +1,5 @@
 const item = require("../models/clothingItem");
-const { Invalid_Data_ERROR } = require("../utils/errors");
+const { Invalid_Data_ERROR, Invalid_Id_ERROR } = require("../utils/errors");
 
 module.exports.getClothingItems = (req, res) => {
   console.log(req);
@@ -44,23 +44,45 @@ module.exports.deleteClothingItem = (req, res) => {
 module.exports.likeItem = (req, res) => {
   item
     .findByIdAndUpdate(
-      req.user._id,
+      req.params.itemId,
       { $addToSet: { likes: req.user._id } },
       { new: true },
     )
     .orFail()
+    .then((item) => {
+      res.send(item);
+    })
     .catch((err) => {
-      console.log(err);
-      console.error(
-        `Error ${err.name} with the message ${err.message} has occurred while executing the code`,
-      );
+      console.error(err);
+      if (err.name === "CastError") {
+        res
+          .status(Invalid_Data_ERROR)
+          .send({ message: "Cannot find item with that Id" });
+      } else {
+        res.status(Invalid_Id_ERROR).send({ message: "Invalid item Id" });
+      }
     });
 };
 
 module.exports.dislkeItem = (req, res) => {
-  item.findByIdAndUpdate(
-    req.user._id,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  );
+  item
+    .findByIdAndUpdate(
+      req.params.itemId,
+      { $pull: { likes: req.user._id } },
+      { new: true },
+    )
+    .orFail()
+    .then((item) => {
+      res.send(item);
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        res
+          .status(Invalid_Data_ERROR)
+          .send({ message: "Cannot find item with that Id" });
+      } else {
+        res.status(Invalid_Id_ERROR).send({ message: "Invalid item Id" });
+      }
+    });
 };

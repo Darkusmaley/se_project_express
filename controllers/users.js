@@ -24,7 +24,9 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === "DocumentNotFoundError") {
-        res.status(Invalid_Id_ERROR).send({ message: "Invalid user Id" });
+        res
+          .status(Invalid_Id_ERROR)
+          .send({ message: "Cannot find item with that Id" });
       } else {
         res
           .status(Invalid_Data_ERROR)
