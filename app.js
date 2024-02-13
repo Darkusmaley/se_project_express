@@ -7,9 +7,9 @@ const mainRouter = require("./routes/index");
 
 app.use(express.json());
 app.use("/", mainRouter);
-app.use((req, res) => {
+app.use((req, res, next) => {
   req.user = { _id: "65ca73450f708f0aa646d950" };
-  next;
+  next();
 });
 
 mongoose

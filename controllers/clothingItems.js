@@ -2,10 +2,13 @@ const item = require("../models/clothingItem");
 const { Invalid_Data_ERROR } = require("../utils/errors");
 
 module.exports.getClothingItems = (req, res) => {
+  console.log(req);
+  console.log(req.body);
   item
     .find({})
-    .then((items) => res.status(200).res.send(items))
-    .catch(() => {
+    .then((items) => res.status(200).send(items))
+    .catch((err) => {
+      console.log(err);
       res
         .status(Invalid_Data_ERROR)
         .send([{ message: "Unable to retrieve data" }]);
@@ -16,8 +19,9 @@ module.exports.createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   item
     .create({ name, weather, imageUrl })
-    .then((item) => res.status(200).res.send({ data: item }))
-    .catch(() => {
+    .then((item) => res.status(200).send(item))
+    .catch((err) => {
+      console.log(err);
       res.status(Invalid_Data_ERROR).send({ message: "Unable to create item" });
     });
 };
@@ -27,8 +31,9 @@ module.exports.deleteClothingItem = (req, res) => {
   item
     .findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(200).res.send(item))
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
+      console.log(err);
       console.error(
         `Error ${err.name} with the message ${err.message} has occurred while executing the code`,
       );
@@ -44,6 +49,7 @@ module.exports.likeItem = (req, res) => {
     )
     .orFail()
     .catch((err) => {
+      console.log(err);
       console.error(
         `Error ${err.name} with the message ${err.message} has occurred while executing the code`,
       );
