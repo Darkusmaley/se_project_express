@@ -34,9 +34,13 @@ module.exports.deleteClothingItem = (req, res) => {
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.log(err);
-      console.error(
-        `Error ${err.name} with the message ${err.message} has occurred while executing the code`,
-      );
+      if (err.name === "CastError") {
+        res
+          .status(Invalid_Data_ERROR)
+          .send({ message: "Cannot find item with that Id" });
+      } else {
+        res.status(Invalid_Id_ERROR).send({ message: "Invalid item Id" });
+      }
     });
 };
 
