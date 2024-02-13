@@ -18,10 +18,11 @@ module.exports.getClothingItems = (req, res) => {
 module.exports.createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   item
-    .create({ name, weather, imageUrl })
+    .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.log(err);
+
       res.status(Invalid_Data_ERROR).send({ message: "Unable to create item" });
     });
 };

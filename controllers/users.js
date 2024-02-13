@@ -17,15 +17,19 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.params;
   User.findById(userId)
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.log(err);
-      res
-        .status(Invalid_Id_ERROR)
-        .send({ message: "Cannot find user with that Id" });
+      if (err.name === "DocumentNotFoundError") {
+        res.status(Invalid_Id_ERROR).send({ message: "Invalid user Id" });
+      } else {
+        res
+          .status(Invalid_Data_ERROR)
+          .send({ message: "Cannot find User with that Id" });
+      }
     });
 };
 
