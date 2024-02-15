@@ -21,7 +21,7 @@ module.exports.createClothingItem = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === "ValidationError") {
-        res.status(InvalidDataError).send({ message: "Unable to create item" });
+        return res.status(InvalidDataError).send({ message: "Unable to create item" });
       }
       return res.status(InternalError).send({ message: "Server error" });
     });
