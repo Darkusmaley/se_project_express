@@ -1,18 +1,16 @@
 const User = require("../models/user");
 const {
-  INTERNAL_ERROR,
-  Invalid_Data_ERROR,
-  Invalid_Id_ERROR,
+  InternalError,
+  InvalidDataError,
+  InvalidIdError,
 } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((user) => res.status(200).send(user))
-    .catch(() => {
+    .then((user) => res.send(user))
+    .catch((err) => {
       console.log(err);
-      res
-        .status(Invalid_Data_ERROR)
-        .send([{ message: "Unable to find users" }]);
+      res.status(InternalError).send([{ message: "Server error" }]);
     });
 };
 
@@ -20,27 +18,32 @@ module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
-      console.log(err);
-      if (err.name === "DocumentNotFoundError") {
-        res
-          .status(Invalid_Id_ERROR)
-          .send({ message: "Cannot find item with that Id" });
-      } else {
-        res
-          .status(Invalid_Data_ERROR)
-          .send({ message: "Cannot find User with that Id" });
+      console.error(err);
+
+      if (err.name === "CastError") {
+        return res.status(InvalidDataError).send({ message: "Bad request" });
       }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(InvalidIdError)
+          .send({ message: "Cannot find item with that Id" });
+      }
+      return res.status(InternalError).send({ message: "Server error" });
     });
 };
 
 module.exports.createUser = (req, res) => {
   const { name, avatar } = req.body;
   User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.log(err);
-      res.status(Invalid_Data_ERROR).send({ message: "Cannot create user" });
+      if (err.name === "ValidationError") {
+        res.status(InvalidDataError).send({ message: "Cannot create user" });
+      } else {
+        res.status(InternalError).send({ message: "Server error" });
+      }
     });
 };

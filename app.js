@@ -7,7 +7,7 @@ const mainRouter = require("./routes/index");
 
 app.use(express.json());
 app.use((req, res, next) => {
-  req.user = { _id: "65cbb63a3464c9b8e864020d" };
+  req.user = { _id: "65cd8e269370ec1af0c9cf0f" };
   next();
 });
 app.use("/", mainRouter);

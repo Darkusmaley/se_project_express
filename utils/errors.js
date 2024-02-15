@@ -1,5 +1,5 @@
-const Invalid_Data_ERROR = 400;
-const Invalid_Id_ERROR = 404;
-const INTERNAL_ERROR = 500;
+const InvalidDataError = 400;
+const InvalidIdError = 404;
+const InternalError = 500;
 
-module.exports = { INTERNAL_ERROR, Invalid_Data_ERROR, Invalid_Id_ERROR };
+module.exports = { InternalError, InvalidDataError, InvalidIdError };
