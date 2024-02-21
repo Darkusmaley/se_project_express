@@ -73,7 +73,8 @@ module.exports.getCurrentUser = (req, res) => {
   const { userId } = req.user._id;
   User.findById(userId)
     .then((user) => {
-      res.send(user);
+      console.log(user);
+      res.send({ user });
     })
     .catch((err) => {
       console.error(err);

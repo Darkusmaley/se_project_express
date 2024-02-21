@@ -5,12 +5,12 @@ const jwt = require("jsonwebtoken");
 const extractToken = (header) => header.replace("Bearer ", "");
 
 module.exports.auth = (req, res, next) => {
-  const { Authorization } = req.headers;
-  if (!Authorization || !Authorization.startsWith("Bearer ")) {
-    console.error("Authorization header is missing", Authorization);
+  const { authorization } = req.headers;
+  if (!authorization || !authorization.startsWith("Bearer ")) {
+    console.error("Authorization header is missing", authorization);
     return res.status(UnauthorizedError).send({ message: "User unauthorized" });
   }
-  const token = extractToken(Authorization);
+  const token = extractToken(authorization);
   let payload;
 
   try {
