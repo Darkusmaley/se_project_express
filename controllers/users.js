@@ -44,7 +44,7 @@ module.exports.createUser = (req, res) => {
   bcrypt.hash(password, 10).then((hash) => {
     User.create({ name, avatar, email, password: hash })
       .then((user) => {
-        res.send(user);
+        res.send({ name: user.name, avatar: user.avatar, email: user.email });
         if (!email) {
           throw new Error({ message: "Duplicate email" });
         }
@@ -52,14 +52,14 @@ module.exports.createUser = (req, res) => {
       .catch((err) => {
         console.log(err);
 
-        if (err.name === 11000) {
+        if (err.code === 11000) {
           return res.status(ConflictError).send({ message: "Duplicate user" });
         }
 
         if (err.name === "ValidationError") {
-          return res.status(InvalidDataError).send({ message: err });
+          return res.status(InvalidDataError).send({ message: "Invalid data" });
         }
-        return res.status(InternalError).send({ message: "Server error" });
+        return res.status(InternalError).send({ message: "Server Error" });
       });
   });
 };
@@ -96,19 +96,13 @@ module.exports.updateUser = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "Unathorized") {
-        return res
-          .status(UnauthorizedError)
-          .send({ message: "User unathorized" });
-      }
       return res.status(InternalError).send({ message: "Server error" });
     });
 };
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  User.findUserByCredentials({ email, password })
-    .select("+password")
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
@@ -117,6 +111,17 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(UnauthorizedError).send({ message: "User unauthorized" });
+      if (err.name === "Unathorized") {
+        return res
+          .status(UnauthorizedError)
+          .send({ message: "User unathorized" });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(InvalidIdError)
+          .send({ message: "Cannot find item with that Id" });
+      }
+
+      res.status(InvalidDataError).send({ message: "Data not found" });
     });
 };

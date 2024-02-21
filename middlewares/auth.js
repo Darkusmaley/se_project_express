@@ -3,11 +3,12 @@ const { JWT_SECRET } = require("../utils/config");
 const jwt = require("jsonwebtoken");
 
 module.exports.auth = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith("Bearer ")) {
+  const { Authorization } = req.headers;
+  if (!Authorization || !Authorization.startsWith("Bearer ")) {
+    console.error("Authorization header is missing", Authorization);
     return res.status(UnauthorizedError).send({ message: "User unauthorized" });
   }
-  const token = authorization.replace("Bearer ", "");
+  const token = Authorization.replace("Bearer ", "");
   let payload;
 
   try {
