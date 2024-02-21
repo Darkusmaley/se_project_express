@@ -1,1 +1,3 @@
-module.exports.JWT_SECRET = "Secret_key_here";
+
+
+module.exports.JWT_SECRET = "Secret_Key_Here";

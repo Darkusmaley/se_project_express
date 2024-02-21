@@ -1,5 +1,5 @@
-const { JWT_SECRET } = require("../utils/config");
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const {
@@ -10,41 +10,46 @@ const {
   ConflictError,
 } = require("../utils/errors");
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((user) => res.send(user))
-    .catch((err) => {
-      console.log(err);
-      res.status(InternalError).send([{ message: "Server error" }]);
-    });
-};
+// module.exports.getUsers = (req, res) => {
+//   User.find({})
+//     .then((user) => res.send(user))
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(InternalError).send([{ message: "Server error" }]);
+//     });
+// };
 
-module.exports.getUserById = (req, res) => {
-  const { userId } = req.params;
-  User.findById(userId)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      console.error(err);
+// module.exports.getUserById = (req, res) => {
+//   const { userId } = req.params;
+//   User.findById(userId)
+//     .orFail()
+//     .then((user) => res.send(user))
+//     .catch((err) => {
+//       console.error(err);
 
-      if (err.name === "CastError") {
-        return res.status(InvalidDataError).send({ message: "Bad request" });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(InvalidIdError)
-          .send({ message: "Cannot find item with that Id" });
-      }
-      return res.status(InternalError).send({ message: "Server error" });
-    });
-};
+//       if (err.name === "CastError") {
+//         return res.status(InvalidDataError).send({ message: "Bad request" });
+//       }
+//       if (err.name === "DocumentNotFoundError") {
+//         return res
+//           .status(InvalidIdError)
+//           .send({ message: "Cannot find item with that Id" });
+//       }
+//       return res.status(InternalError).send({ message: "Server error" });
+//     });
+// };
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
+
   bcrypt.hash(password, 10).then((hash) => {
     User.create({ name, avatar, email, password: hash })
       .then((user) => {
-        res.send({ name: user.name, avatar: user.avatar, email: user.email });
+        res.send({
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+        });
         if (!email) {
           throw new Error({ message: "Duplicate email" });
         }
@@ -65,10 +70,10 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getCurrentUser = (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.user._id;
   User.findById(userId)
     .then((user) => {
-      res.send(user._id);
+      res.send(user);
     })
     .catch((err) => {
       console.error(err);
@@ -102,6 +107,7 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
+
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
