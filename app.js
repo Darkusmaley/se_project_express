@@ -1,15 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
 const { PORT = 3001 } = process.env;
 const mainRouter = require("./routes/index");
 
+app.use(cors());
 app.use(express.json());
-app.use((req, res, next) => {
-  req.user = { _id: "65cd8e269370ec1af0c9cf0f" };
-  next();
-});
 app.use("/", mainRouter);
 
 mongoose
