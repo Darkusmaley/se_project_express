@@ -4,7 +4,7 @@ const {
   InvalidDataError,
   InvalidIdError,
   ForbiddenError,
-} = require("../utils/errors");
+} = require("../utils/constants");
 
 module.exports.getClothingItems = (req, res) => {
   Item.find({})
@@ -41,11 +41,9 @@ module.exports.deleteClothingItem = (req, res) => {
           .status(ForbiddenError)
           .send({ message: "Forbidden request" });
       }
-      return Item.findByIdAndRemove(req.params.itemId);
-    })
-
-    .then((user) => {
-      res.send(user);
+      return Item.findByIdAndRemove(req.params.itemId).then((user) => {
+        res.send(user);
+      });
     })
     .catch((err) => {
       console.log(err);
