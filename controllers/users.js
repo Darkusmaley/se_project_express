@@ -70,8 +70,9 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getCurrentUser = (req, res) => {
-  const { userId } = req.user._id;
+  const userId = req.user._id;
   User.findById(userId)
+    .orFail()
     .then((user) => {
       console.log(user);
       res.send({ user });

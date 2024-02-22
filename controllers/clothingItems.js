@@ -32,36 +32,36 @@ module.exports.createClothingItem = (req, res) => {
 
 module.exports.deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
-  const { _id: userId } = req.user;
 
-  Item.findOne({ _id: userId }).then((item) => {
-    if (!item) {
-      return Promise.reject(new Error("Id cannout be found"));
-    }
-    if (!item?.owner?.equals(userId)) {
-      return Promise.reject(new Error("Incorrect item owner"));
-    }
-    return Item.deleteOne({ _id: itemId, owner: userId })
-      .orFail()
-      .then((deletedItem) => res.send(deletedItem))
-      .catch((err) => {
-        console.log(err);
-        if (err.name === "DocumentNotFoundError") {
-          return res
-            .status(InvalidIdError)
-            .send({ message: "Cannot find item" });
-        }
-        if (err.name === "CastError") {
-          return res.status(InvalidDataError).send({ message: "Bad request" });
-        }
-        if (err.name === "Incorrect item owner") {
-          return res
-            .status(ForbiddenError)
-            .send({ message: "Forbidden request" });
-        }
-        return res.status(InternalError).send({ message: "Server error" });
-      });
-  });
+  Item.findById(itemId)
+    .orFail()
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        return res
+          .status(ForbiddenError)
+          .send({ message: "Forbidden request" });
+      }
+      return Item.findByIdAndRemove(req.params.itemId);
+    })
+
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(InvalidIdError).send({ message: "Data not found" });
+      }
+      if (err.name === "CastError") {
+        return res.status(InvalidDataError).send({ message: "Bad request" });
+      }
+      if (err.name === "Incorrect item owner") {
+        return res
+          .status(ForbiddenError)
+          .send({ message: "Forbidden request" });
+      }
+      return res.status(InternalError).send({ message: "Server error" });
+    });
 };
 
 module.exports.likeItem = (req, res) => {
