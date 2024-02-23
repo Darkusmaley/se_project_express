@@ -7,6 +7,7 @@ const {
   InvalidDataError,
   InvalidIdError,
   ConflictError,
+  UnauthorizedError,
 } = require("../utils/constants");
 
 // module.exports.getUsers = (req, res) => {
@@ -125,13 +126,17 @@ module.exports.login = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(InvalidIdError)
-          .send({ message: "Cannot find item with that Id" });
+          .send({ message: "Cannot find user with that Id" });
       }
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(InvalidDataError)
-          .send({ message: "User data not found" });
+        return res.status(InvalidDataError).send({ message: "User data not found" });
       }
+      if (err.name === "Unauthorized") {
+        return res
+          .status(UnauthorizedError)
+          .send({ message: "User unathorized" });
+      }
+
       return res.status(InternalError).send({ message: "Server error" });
     });
 };
