@@ -129,14 +129,10 @@ module.exports.login = (req, res) => {
           .send({ message: "Cannot find user with that Id" });
       }
       if (err.message === "Incorrect email or password") {
-        return res.status(InvalidDataError).send({ message: "User data not found" });
-      }
-      if (err.name === "Unauthorized") {
         return res
           .status(UnauthorizedError)
-          .send({ message: "User unathorized" });
+          .send({ message: "User data not found" });
       }
-
 
       return res.status(InternalError).send({ message: "Server error" });
     });
