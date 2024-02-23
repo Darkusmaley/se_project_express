@@ -137,6 +137,7 @@ module.exports.login = (req, res) => {
           .send({ message: "User unathorized" });
       }
 
+
       return res.status(InternalError).send({ message: "Server error" });
     });
 };
