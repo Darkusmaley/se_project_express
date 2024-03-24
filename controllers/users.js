@@ -8,6 +8,8 @@ const {
   InvalidIdError,
   ConflictError,
   UnauthorizedError,
+  BadRequestError,
+  NotFoundError,
 } = require("../utils/constants");
 
 // module.exports.getUsers = (req, res) => {
@@ -104,9 +106,10 @@ module.exports.updateUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return req.status(InvalidDataError).send({ message: "Data not found" });
+        next(new BadRequestError("Unable to valudate user"));
+      } else {
+        next(err);
       }
-      return res.status(InternalError).send({ message: "Server error" });
     });
 };
 
@@ -124,16 +127,12 @@ module.exports.login = (req, res) => {
       console.error(err);
 
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(InvalidIdError)
-          .send({ message: "Cannot find user with that Id" });
+        next(NotFoundError("Cannot find user with that id"));
       }
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(UnauthorizedError)
-          .send({ message: "User data not found" });
+        next(UnauthorizedError("User data not authorized"));
       }
 
-      return res.status(InternalError).send({ message: "Server error" });
+      next(err);
     });
 };

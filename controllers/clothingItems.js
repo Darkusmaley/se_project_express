@@ -4,6 +4,8 @@ const {
   InvalidDataError,
   InvalidIdError,
   ForbiddenError,
+  NotFoundError,
+  BadRequestError,
 } = require("../utils/constants");
 
 module.exports.getClothingItems = (req, res) => {
@@ -100,13 +102,11 @@ module.exports.dislkeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(InvalidIdError)
-          .send({ message: "Cannot find item with that Id" });
+        next(new NotFoundError("Cannot find item with that Id"));
       }
       if (err.name === "CastError") {
-        return res.status(InvalidDataError).send({ message: "Bad request" });
+        next(new BadRequestError("Bad request"));
       }
-      return res.status(InternalError).send({ message: "Server error" });
+      next(err);
     });
 };

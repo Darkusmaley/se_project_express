@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const errorHandler = require("../se_project_express/middlewares/errorHandler");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -9,6 +10,7 @@ const mainRouter = require("./routes/index");
 app.use(cors());
 app.use(express.json());
 app.use("/", mainRouter);
+app.use(errorHandler);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")

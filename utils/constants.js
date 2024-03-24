@@ -1,5 +1,5 @@
-const InvalidDataError = 400;
-const InvalidIdError = 404;
+const BadRequestError = 400;
+const NotFoundError = 404;
 const InternalError = 500;
 const UnauthorizedError = 401;
 const ConflictError = 409;
@@ -7,8 +7,8 @@ const ForbiddenError = 403;
 
 module.exports = {
   InternalError,
-  InvalidDataError,
-  InvalidIdError,
+  BadRequestError,
+  NotFoundError,
   UnauthorizedError,
   ConflictError,
   ForbiddenError,

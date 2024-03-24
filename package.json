@@ -4,7 +4,7 @@
   "description": "The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.\r ## Running the Project\r `npm run start` — to launch the server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon app.js",
     "start": "node app.js",
     "lint": "npx eslint ."
@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "celebrate": "^15.0.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
@@ -24,6 +25,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.3",
     "prettier": "^3.2.5"
   }
