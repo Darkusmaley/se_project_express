@@ -3,9 +3,6 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 const {
-  InternalError,
-  InvalidDataError,
-  InvalidIdError,
   ConflictError,
   UnauthorizedError,
   BadRequestError,
@@ -31,13 +28,13 @@ module.exports.createUser = (req, res) => {
         console.log(err);
 
         if (err.code === 11000) {
-          return res.status(ConflictError).send({ message: "Duplicate user" });
+          next(new ConflictError("Duplicate user"));
         }
 
         if (err.name === "ValidationError") {
-          return res.status(InvalidDataError).send({ message: "Invalid data" });
+          next(new BadRequestError("Bad request"));
         }
-        return res.status(InternalError).send({ message: "Server Error" });
+        next(err);
       });
   });
 };
@@ -53,14 +50,12 @@ module.exports.getCurrentUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res.status(InvalidDataError).send({ message: "Bad request" });
+        next(new BadRequestError("Bad request"));
       }
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(InvalidIdError)
-          .send({ message: "Cannot find item with that Id" });
+        next(new NotFoundError("Cannot find user with that id"));
       }
-      return res.status(InternalError).send({ message: "Server error" });
+      next(err);
     });
 };
 
@@ -98,10 +93,10 @@ module.exports.login = (req, res) => {
       console.error(err);
 
       if (err.name === "DocumentNotFoundError") {
-        next(NotFoundError("Cannot find user with that id"));
+        next(new NotFoundError("Cannot find user with that id"));
       }
       if (err.message === "Incorrect email or password") {
-        next(UnauthorizedError("User data not authorized"));
+        next(new UnauthorizedError("User data not authorized"));
       }
 
       next(err);

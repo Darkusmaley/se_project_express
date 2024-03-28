@@ -20,6 +20,8 @@ module.exports.validateItemCreation = celebrate({
       "string.empty": 'The "imageUrl" field must be filled in',
       "string.uri": 'the "imageUrl" field must be a valid url',
     }),
+
+    weather: Joi.string().valid("hot", "warm", "cold").required(),
   }),
 });
 
@@ -72,9 +74,14 @@ module.exports.validateUserID = celebrate({
       "string.min": 'The minimum length of the "itemId" field is 24',
       "string.empty": 'The "itemId" field must be filled in',
     }),
-    userId: Joi.string().required().min(24).messages({
-      "string.min": 'The minimum length of the "userId" field is 24',
-      "string.empty": 'The "userId" field must be filled in',
+  }),
+});
+
+module.exports.validateUpdateCurrentUser = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    avatar: Joi.string().custom(validateURL).messages({
+      "string.uri": 'The "avatarUrl" field must be a valid URL',
     }),
   }),
 });

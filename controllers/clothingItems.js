@@ -1,8 +1,5 @@
 const Item = require("../models/clothingItem");
 const {
-  InternalError,
-  InvalidDataError,
-  InvalidIdError,
   ForbiddenError,
   NotFoundError,
   BadRequestError,
@@ -13,7 +10,7 @@ module.exports.getClothingItems = (req, res) => {
     .then((items) => res.send(items))
     .catch((err) => {
       console.log(err);
-      res.status(InternalError).send([{ message: "Unable to retrieve data" }]);
+      ext(err);
     });
 };
 
@@ -24,11 +21,9 @@ module.exports.createClothingItem = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(InvalidDataError)
-          .send({ message: "Unable to create item" });
+        next(new BadRequestError("Bad request"));
       }
-      return res.status(InternalError).send({ message: "Server error" });
+      ext(err);
     });
 };
 
@@ -39,9 +34,7 @@ module.exports.deleteClothingItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res
-          .status(ForbiddenError)
-          .send({ message: "Forbidden request" });
+        next(new ForbiddenError("Forbidden request"));
       }
       return Item.findByIdAndRemove(req.params.itemId).then((user) => {
         res.send(user);
@@ -50,17 +43,15 @@ module.exports.deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(InvalidIdError).send({ message: "Data not found" });
+        next(new NotFoundError("Cannot find item with that Id"));
       }
       if (err.name === "CastError") {
-        return res.status(InvalidDataError).send({ message: "Bad request" });
+        next(new BadRequestError("Bad request"));
       }
       if (err.name === "Incorrect item owner") {
-        return res
-          .status(ForbiddenError)
-          .send({ message: "Forbidden request" });
+        next(new ForbiddenError("Forbidden request"));
       }
-      return res.status(InternalError).send({ message: "Server error" });
+      ext(err);
     });
 };
 
@@ -77,15 +68,13 @@ module.exports.likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(InvalidIdError)
-          .send({ message: "Cannot find item with that Id" });
+        next(new NotFoundError("Cannot find item with that Id"));
       }
 
       if (err.name === "CastError") {
-        return res.status(InvalidDataError).send({ message: "Bad request" });
+        next(new BadRequestError("Bad request"));
       }
-      return res.status(InternalError).send({ message: "Server error" });
+      next(err);
     });
 };
 

@@ -8,7 +8,7 @@ module.exports.auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer ")) {
     console.error("Authorization header is missing", authorization);
-    return res.status(UnauthorizedError).send({ message: "User unauthorized" });
+    next(new UnauthorizedError("Authorization Required"));
   }
   const token = extractToken(authorization);
   let payload;
@@ -17,9 +17,7 @@ module.exports.auth = (req, res, next) => {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     console.error(err);
-    return res
-      .status(UnauthorizedError)
-      .send({ message: "Authorization Required" });
+    next(new UnauthorizedError("Authorization Required"));
   }
   req.user = payload;
   return next();
