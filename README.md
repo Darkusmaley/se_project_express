@@ -31,4 +31,4 @@ In this project the focus was on creating a back-end for my WTWR project. Using 
 
 #### Domain name
 
-`http//marcuswtwr.jumpingcrabs.com`
+`https://www.marcuswtwr.jumpingcrab.com/`
