@@ -5,16 +5,16 @@ const {
   BadRequestError,
 } = require("../utils/constants");
 
-module.exports.getClothingItems = (req, res) => {
+module.exports.getClothingItems = (req, res, next) => {
   Item.find({})
     .then((items) => res.send(items))
     .catch((err) => {
       console.log(err);
-      ext(err);
+      next(err);
     });
 };
 
-module.exports.createClothingItem = (req, res) => {
+module.exports.createClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   Item.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => res.send(item))
@@ -23,11 +23,11 @@ module.exports.createClothingItem = (req, res) => {
       if (err.name === "ValidationError") {
         next(new BadRequestError("Bad request"));
       }
-      ext(err);
+      next(err);
     });
 };
 
-module.exports.deleteClothingItem = (req, res) => {
+module.exports.deleteClothingItem = (req, res, next) => {
   const { itemId } = req.params;
 
   Item.findById(itemId)
@@ -51,11 +51,11 @@ module.exports.deleteClothingItem = (req, res) => {
       if (err.name === "Incorrect item owner") {
         next(new ForbiddenError("Forbidden request"));
       }
-      ext(err);
+      next(err);
     });
 };
 
-module.exports.likeItem = (req, res) => {
+module.exports.likeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -78,7 +78,7 @@ module.exports.likeItem = (req, res) => {
     });
 };
 
-module.exports.dislkeItem = (req, res) => {
+module.exports.dislkeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },

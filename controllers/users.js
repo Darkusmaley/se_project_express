@@ -9,7 +9,7 @@ const {
   NotFoundError,
 } = require("../utils/constants");
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   bcrypt.hash(password, 10).then((hash) => {
@@ -39,7 +39,7 @@ module.exports.createUser = (req, res) => {
   });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail()
@@ -59,7 +59,7 @@ module.exports.getCurrentUser = (req, res) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, avatar } = req.body;
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -79,7 +79,7 @@ module.exports.updateUser = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)

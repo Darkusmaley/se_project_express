@@ -2,12 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const errorHandler = require("../se_project_express/middlewares/errorHandler");
 const { errors } = require("celebrate");
-const {
-  requestLogger,
-  errorLogger,
-} = require("../se_project_express/middlewares/logger");
+const errorHandler = require("./middlewares/errorHandler");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -24,7 +21,7 @@ app.get("/crash-test", () => {
 app.use("/", mainRouter);
 app.use(errorLogger);
 app.use(errors());
-app.use(errorHandler());
+app.use(errorHandler);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
