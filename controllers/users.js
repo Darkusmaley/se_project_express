@@ -26,11 +26,11 @@ module.exports.createUser = (req, res, next) => {
         console.log(err);
 
         if (err.code === 11000) {
-          next(new ConflictError("Duplicate user"));
+          return next(new ConflictError("Duplicate user"));
         }
 
         if (err.name === "ValidationError") {
-          next(new BadRequestError("Bad request"));
+          return next(new BadRequestError("Bad request"));
         }
         next(err);
       });
@@ -48,10 +48,10 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        next(new BadRequestError("Bad request"));
+        return next(new BadRequestError("Bad request"));
       }
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Cannot find user with that id"));
+        return next(new NotFoundError("Cannot find user with that id"));
       }
       next(err);
     });
@@ -70,7 +70,7 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Unable to valudate user"));
+        return next(new BadRequestError("Unable to valudate user"));
       } else {
         next(err);
       }
@@ -91,10 +91,10 @@ module.exports.login = (req, res, next) => {
       console.error(err);
 
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Cannot find user with that id"));
+        return next(new NotFoundError("Cannot find user with that id"));
       }
       if (err.message === "Incorrect email or password") {
-        next(new UnauthorizedError("User data not authorized"));
+        return next(new UnauthorizedError("User data not authorized"));
       }
 
       next(err);

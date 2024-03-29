@@ -19,7 +19,7 @@ module.exports.createClothingItem = (req, res, next) => {
     .catch((err) => {
       console.log(err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Bad request"));
+        return next(new BadRequestError("Bad request"));
       }
       next(err);
     });
@@ -41,13 +41,13 @@ module.exports.deleteClothingItem = (req, res, next) => {
     .catch((err) => {
       console.log(err);
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Cannot find item with that Id"));
+        return next(new NotFoundError("Cannot find item with that Id"));
       }
       if (err.name === "CastError") {
-        next(new BadRequestError("Bad request"));
+        return next(new BadRequestError("Bad request"));
       }
       if (err.name === "Incorrect item owner") {
-        next(new ForbiddenError("Forbidden request"));
+        return next(new ForbiddenError("Forbidden request"));
       }
       next(err);
     });
@@ -66,11 +66,11 @@ module.exports.likeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Cannot find item with that Id"));
+        return next(new NotFoundError("Cannot find item with that Id"));
       }
 
       if (err.name === "CastError") {
-        next(new BadRequestError("Bad request"));
+        return next(new BadRequestError("Bad request"));
       }
       next(err);
     });
@@ -89,10 +89,10 @@ module.exports.dislkeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Cannot find item with that Id"));
+        return next(new NotFoundError("Cannot find item with that Id"));
       }
       if (err.name === "CastError") {
-        next(new BadRequestError("Bad request"));
+        return next(new BadRequestError("Bad request"));
       }
       next(err);
     });
