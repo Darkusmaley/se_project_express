@@ -70,7 +70,7 @@ module.exports.validateUserLogin = celebrate({
 
 module.exports.validateUserID = celebrate({
   body: Joi.object().keys({
-    _id: Joi.string().required().min(24).messages({
+    id: Joi.string().required().min(24).messages({
       "string.min": 'The minimum length of the "itemId" field is 24',
       "string.empty": 'The "itemId" field must be filled in',
     }),
