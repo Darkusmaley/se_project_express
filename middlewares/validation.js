@@ -70,9 +70,9 @@ module.exports.validateUserLogin = celebrate({
 
 module.exports.validateUserID = celebrate({
   body: Joi.object().keys({
-    itemId: Joi.string().required().min(24).messages({
-      "string.min": 'The minimum length of the "itemId" field is 24',
-      "string.empty": 'The "itemId" field must be filled in',
+    id: Joi.string().hex().length(24).messages({
+      "string-hex": "ID must be hexadecimal string",
+      "string-lenght": "ID must be 24 characters in lenght",
     }),
   }),
 });
