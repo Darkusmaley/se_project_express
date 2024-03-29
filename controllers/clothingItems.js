@@ -21,7 +21,7 @@ module.exports.createClothingItem = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Bad request"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -32,7 +32,7 @@ module.exports.deleteClothingItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        next(new ForbiddenError("Forbidden request"));
+        return next(new ForbiddenError("Forbidden request"));
       }
       return Item.findByIdAndRemove(req.params.itemId).then((user) => {
         res.send(user);
@@ -49,7 +49,7 @@ module.exports.deleteClothingItem = (req, res, next) => {
       if (err.name === "Incorrect item owner") {
         return next(new ForbiddenError("Forbidden request"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -72,7 +72,7 @@ module.exports.likeItem = (req, res, next) => {
       if (err.name === "CastError") {
         return next(new BadRequestError("Bad request"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -94,6 +94,6 @@ module.exports.dislkeItem = (req, res, next) => {
       if (err.name === "CastError") {
         return next(new BadRequestError("Bad request"));
       }
-      next(err);
+      return next(err);
     });
 };

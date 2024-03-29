@@ -32,7 +32,7 @@ module.exports.createUser = (req, res, next) => {
         if (err.name === "ValidationError") {
           return next(new BadRequestError("Bad request"));
         }
-        next(err);
+        return next(err);
       });
   });
 };
@@ -53,7 +53,7 @@ module.exports.getCurrentUser = (req, res, next) => {
       if (err.name === "DocumentNotFoundError") {
         return next(new NotFoundError("Cannot find user with that id"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -71,9 +71,8 @@ module.exports.updateUser = (req, res, next) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Unable to valudate user"));
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
@@ -97,6 +96,6 @@ module.exports.login = (req, res, next) => {
         return next(new UnauthorizedError("User data not authorized"));
       }
 
-      next(err);
+      return next(err);
     });
 };
